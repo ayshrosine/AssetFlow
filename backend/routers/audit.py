@@ -80,7 +80,7 @@ async def mark_audit_item(item_id: str, payload: AuditItemMark, user: dict = Dep
     cycle = await db.audit_cycles.find_one({"cycle_id": item["cycle_id"]}, {"_id": 0})
     if cycle["status"] == "closed":
         raise HTTPException(status_code=400, detail="Cycle already closed")
-    if user["role"] not in ("admin", "asset_manager") and user["user_id"] not in cycle.get("auditor_ids", []):
+    if user["user_id"] not in cycle.get("auditor_ids", []):
         raise HTTPException(status_code=403, detail="Not assigned to this audit")
     await db.audit_items.update_one(
         {"item_id": item_id},
